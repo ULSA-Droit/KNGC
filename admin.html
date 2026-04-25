@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KNGC — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root {
+  --or:     #C9A84C;
+  --or2:    #E8C97A;
+  --vert:   #1B3A2D;
+  --vert2:  #132B20;
+  --bg:     #0F1A14;
+  --bg2:    #162011;
+  --card:   rgba(27,58,45,.35);
+  --border: rgba(201,168,76,.18);
+  --text:   #EAE5D8;
+  --muted:  #7A9980;
+  --red:    #C03838;
+  --blue:   #3A80D8;
+  --green:  #36B270;
+  --radius: 6px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:220px;min-height:100vh;
+  background:var(--vert2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  flex-shrink:0;
+}
+.sidebar-logo {
+  padding:1.5rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.sidebar-logo .k {
+  font-family:'Cinzel',serif;
+  font-size:32px;color:var(--or);
+  display:block;line-height:1;
+}
+.sidebar-logo .name {
+  font-family:'Cinzel',serif;
+  font-size:9px;letter-spacing:2px;
+  color:var(--or);margin-top:6px;
+  display:block;
+}
+.sidebar-logo .sub {
+  font-size:9px;color:var(--muted);
+  letter-spacing:1px;margin-top:2px;
+  display:block;
+}
+.nav {flex:1;padding:1rem 0;}
+.nav-item {
+  display:flex;align-items:center;gap:10px;
+  padding:10px 1.25rem;
+  font-size:12px;letter-spacing:1px;
+  color:var(--muted);cursor:pointer;
+  transition:all .2s;border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:rgba(201,168,76,.05);}
+.nav-item.active{color:var(--or);border-left-color:var(--or);background:rgba(201,168,76,.08);}
+.nav-icon{font-size:14px;width:18px;text-align:center;}
+.sidebar-footer {
+  padding:1rem 1.25rem;
+  border-top:1px solid var(--border);
+  font-size:10px;color:var(--muted);
+  text-align:center;
+}
+
+/* ── MAIN ── */
+.main {flex:1;overflow-x:hidden;}
+.topbar {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(15,26,20,.8);
+  backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:10;
+}
+.page-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;color:var(--text);
+}
+.status-dot {
+  width:7px;height:7px;border-radius:50%;
+  background:var(--muted);display:inline-block;margin-right:6px;
+}
+.status-dot.ok{background:var(--green);}
+.status-txt{font-size:11px;color:var(--muted);}
+
+.content {padding:2rem;}
+.panel {display:none;}
+.panel.active{display:block;}
+
+/* ── CARDS ── */
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  margin-bottom:1.5rem;
+}
+.card-title {
+  font-family:'Cinzel',serif;
+  font-size:10px;letter-spacing:3px;
+  color:var(--or);margin-bottom:1rem;
+}
+
+/* ── FORM ── */
+.form-grid {
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:600px){.form-grid,.form-grid-3{grid-template-columns:1fr;}}
+.field {display:flex;flex-direction:column;gap:5px;}
+.field label {
+  font-size:10px;letter-spacing:2px;
+  color:var(--muted);
+}
+.field input, .field select, .field textarea {
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:9px 12px;
+  color:var(--text);
+  font-family:'Raleway',sans-serif;
+  font-size:13px;
+  transition:border-color .2s;
+  width:100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline:none;border-color:var(--or);
+}
+.field textarea{resize:vertical;min-height:70px;}
+.field select option{background:var(--bg);}
+
+/* ── BUTTONS ── */
+.btn {
+  padding:9px 20px;
+  border:1px solid var(--border);
+  border-radius:4px;
+  font-family:'Cinzel',serif;
+  font-size:10px;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;
+  background:transparent;color:var(--text);
+}
+.btn-gold{border-color:var(--or);color:var(--or);}
+.btn-gold:hover{background:var(--or);color:var(--bg);}
+.btn-green{border-color:var(--green);color:var(--green);}
+.btn-green:hover{background:var(--green);color:#fff;}
+.btn-red{border-color:var(--red);color:var(--red);}
+.btn-red:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:9px;}
+
+/* ── TABLE ── */
+.data-table {width:100%;border-collapse:collapse;}
+.data-table thead tr{background:rgba(201,168,76,.08);}
+.data-table th {
+  padding:10px 14px;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;
+  color:var(--or);text-align:left;font-weight:400;
+}
+.data-table tbody tr{border-bottom:1px solid rgba(201,168,76,.05);}
+.data-table tbody tr:hover{background:rgba(201,168,76,.04);}
+.data-table td{padding:11px 14px;font-size:13px;color:rgba(234,229,216,.8);}
+
+/* ── BADGES ── */
+.badge {
+  display:inline-block;padding:2px 9px;
+  font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;
+  border:1px solid;border-radius:2px;
+}
+.badge-Amateur{color:#8FA88A;border-color:rgba(143,168,138,.4);}
+.badge-Pro    {color:#C9A84C;border-color:rgba(201,168,76,.4);}
+.badge-Elite  {color:#E8C97A;border-color:rgba(232,201,122,.6);background:rgba(201,168,76,.1);}
+
+/* ── STATS ── */
+.stats-row {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
+  margin-bottom:1.5rem;
+}
+@media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}}
+.stat-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem;text-align:center;
+}
+.stat-val {
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:300;color:var(--or2);
+}
+.stat-lbl{font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+
+/* ── INLINE EDIT ── */
+.inline-select {
+  background:rgba(0,0,0,.4);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:4px 8px;
+  color:var(--text);font-size:12px;
+  font-family:'Raleway',sans-serif;
+}
+.inline-input {
+  background:rgba(0,0,0,.4);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:4px 8px;width:70px;
+  color:var(--text);font-size:13px;
+  font-family:'Raleway',sans-serif;
+  text-align:center;
+}
+.inline-input:focus,.inline-select:focus{outline:none;border-color:var(--or);}
+
+/* ── TOAST ── */
+#toast {
+  position:fixed;bottom:2rem;right:2rem;z-index:999;
+  background:var(--vert);border:1px solid var(--or);
+  padding:12px 20px;border-radius:4px;
+  font-size:12px;color:var(--or);
+  opacity:0;transform:translateY(10px);
+  transition:all .3s;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateY(0);}
+
+/* ── CONFIG ── */
+.config-box {
+  background:rgba(0,0,0,.2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;margin-bottom:1rem;
+}
+
+/* ── TOURNOI DETAIL ── */
+.tournoi-row {
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:1rem;align-items:center;
+}
+.scores-mini {
+  font-size:11px;color:var(--muted);
+  margin-top:4px;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.7);z-index:100;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex;}
+.modal {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:2rem;
+  min-width:420px;max-width:90vw;
+  max-height:80vh;overflow-y:auto;
+}
+.modal-title {
+  font-family:'Cinzel',serif;
+  font-size:11px;letter-spacing:3px;color:var(--or);
+  margin-bottom:1.5rem;
+}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;justify-content:flex-end;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="k">K</span>
+    <span class="name">KING NATIONAL</span>
+    <span class="sub">Golf Club · Admin</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPanel('dashboard')">
+      <span class="nav-icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('membres')">
+      <span class="nav-icon">👤</span> Membres
+    </div>
+    <div class="nav-item" onclick="showPanel('classement')">
+      <span class="nav-icon">🏆</span> Classement
+    </div>
+    <div class="nav-item" onclick="showPanel('tournois')">
+      <span class="nav-icon">⛳</span> Tournois
+    </div>
+    <div class="nav-item" onclick="showPanel('config')">
+      <span class="nav-icon">⚙</span> Config
+    </div>
+  </nav>
+  <div class="sidebar-footer">KNGC · Los Santos · 2026</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="topbar">
+    <div class="page-title" id="topbar-title">Dashboard</div>
+    <div>
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-txt" id="status-txt">Non connecté</span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val" id="d-membres">—</div>
+          <div class="stat-lbl">Membres</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="d-amateur">—</div>
+          <div class="stat-lbl">Amateurs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="d-pro">—</div>
+          <div class="stat-lbl">Pros</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="d-elite">—</div>
+          <div class="stat-lbl">Élites</div>
+        </div>
+      </div>
+      <div class="stats-row" style="grid-template-columns:1fr 1fr;">
+        <div class="stat-card">
+          <div class="stat-val" id="d-tournois">—</div>
+          <div class="stat-lbl">Tournois</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="d-scores">—</div>
+          <div class="stat-lbl">Scores enregistrés</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Derniers membres inscrits</div>
+        <table class="data-table" id="recent-membres">
+          <thead><tr><th>Joueur</th><th>Catégorie</th><th>Points</th></tr></thead>
+          <tbody><tr><td colspan="3" style="text-align:center;padding:1rem;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ MEMBRES ══ -->
+    <div class="panel" id="panel-membres">
+      <div class="card">
+        <div class="card-title">Ajouter un membre</div>
+        <div class="form-grid form-grid-3" style="margin-bottom:1rem;">
+          <div class="field">
+            <label>NOM</label>
+            <input type="text" id="m-nom" placeholder="King">
+          </div>
+          <div class="field">
+            <label>PRÉNOM</label>
+            <input type="text" id="m-prenom" placeholder="Henry">
+          </div>
+          <div class="field">
+            <label>CATÉGORIE</label>
+            <select id="m-cat">
+              <option value="Amateur">🏌️ Amateur</option>
+              <option value="Pro">⛳ Pro</option>
+              <option value="Elite">👑 Elite</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-gold" onclick="addMembre()">+ Ajouter le membre</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Liste des membres</div>
+        <table class="data-table">
+          <thead><tr><th>Joueur</th><th>Catégorie</th><th>Points</th><th>Actions</th></tr></thead>
+          <tbody id="membres-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--muted);">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ CLASSEMENT ══ -->
+    <div class="panel" id="panel-classement">
+      <div class="card">
+        <div class="card-title">👑 Elite</div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Joueur</th><th>Points</th></tr></thead>
+          <tbody id="cl-elite"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">⛳ Pro</div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Joueur</th><th>Points</th></tr></thead>
+          <tbody id="cl-pro"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">🏌️ Amateur</div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Joueur</th><th>Points</th></tr></thead>
+          <tbody id="cl-amateur"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ TOURNOIS ══ -->
+    <div class="panel" id="panel-tournois">
+      <div class="card">
+        <div class="card-title">Créer un tournoi</div>
+        <div class="form-grid" style="margin-bottom:1rem;">
+          <div class="field">
+            <label>NOM DU TOURNOI</label>
+            <input type="text" id="t-nom" placeholder="Open KNGC · Printemps 2026">
+          </div>
+          <div class="field">
+            <label>DATE</label>
+            <input type="date" id="t-date">
+          </div>
+          <div class="field">
+            <label>LIEU</label>
+            <input type="text" id="t-lieu" placeholder="King's Golf Club & Resort">
+          </div>
+          <div class="field">
+            <label>DESCRIPTION</label>
+            <input type="text" id="t-desc" placeholder="Tournoi ouvert toutes catégories">
+          </div>
+        </div>
+        <button class="btn btn-gold" onclick="addTournoi()">+ Créer le tournoi</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Historique des tournois</div>
+        <div id="tournois-admin-list">
+          <p style="text-align:center;padding:1.5rem;color:var(--muted);">Chargement...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CONFIG ══ -->
+    <div class="panel" id="panel-config">
+      <div class="card">
+        <div class="card-title">Connexion Supabase</div>
+        <div class="form-grid" style="margin-bottom:1rem;">
+          <div class="field">
+            <label>URL SUPABASE</label>
+            <input type="text" id="cfg-url" placeholder="https://xxxx.supabase.co">
+          </div>
+          <div class="field">
+            <label>ANON KEY</label>
+            <input type="text" id="cfg-key" placeholder="eyJhbGciOi...">
+          </div>
+        </div>
+        <div style="display:flex;gap:.75rem;">
+          <button class="btn btn-gold" onclick="saveConfig()">Enregistrer et connecter</button>
+          <button class="btn btn-red" onclick="clearConfig()">Effacer</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Lien Vitrine</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">La vitrine publique lit les mêmes données Supabase. Partagez l'URL <strong style="color:var(--text);">index.html</strong> à vos membres.</p>
+        <button class="btn btn-gold" onclick="window.open('index.html','_blank')">Ouvrir la vitrine ↗</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ── MODAL SCORE ── -->
+<div class="modal-overlay" id="modal-score">
+  <div class="modal">
+    <div class="modal-title">Ajouter des scores — <span id="modal-tournoi-name"></span></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:1rem;">Renseignez les points obtenus par chaque membre lors de ce tournoi. Les points seront ajoutés à leur total.</p>
+    <div id="scores-form"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-gold" onclick="saveScores()">Enregistrer les scores</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let sb = null;
+let allMembres = [];
+let currentTournoiId = null;
+
+// ── CONFIG ──
+function loadConfig() {
+  const url = localStorage.getItem('kngc_sb_url') || '';
+  const key = localStorage.getItem('kngc_sb_key') || '';
+  document.getElementById('cfg-url').value = url;
+  document.getElementById('cfg-key').value = key;
+  if (url && key) initSB(url, key);
+}
+
+function saveConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  const key = document.getElementById('cfg-key').value.trim();
+  if (!url || !key) { toast('Remplissez URL et clé.'); return; }
+  localStorage.setItem('kngc_sb_url', url);
+  localStorage.setItem('kngc_sb_key', key);
+  initSB(url, key);
+}
+
+function clearConfig() {
+  localStorage.removeItem('kngc_sb_url');
+  localStorage.removeItem('kngc_sb_key');
+  sb = null;
+  setStatus(false);
+  toast('Config effacée.');
+}
+
+async function initSB(url, key) {
+  try {
+    sb = supabase.createClient(url, key);
+    const { error } = await sb.from('membres').select('id').limit(1);
+    if (error) throw error;
+    setStatus(true);
+    loadAll();
+  } catch(e) {
+    setStatus(false);
+    toast('Connexion échouée : ' + e.message);
+  }
+}
+
+function setStatus(ok) {
+  document.getElementById('status-dot').className = 'status-dot' + (ok ? ' ok' : '');
+  document.getElementById('status-txt').textContent = ok ? 'Connecté' : 'Non connecté';
+}
+
+// ── NAVIGATION ──
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  const titles = {dashboard:'Dashboard',membres:'Membres',classement:'Classement',tournois:'Tournois',config:'Configuration'};
+  document.getElementById('topbar-title').textContent = titles[id] || '';
+  if (id === 'classement') renderClassement();
+  if (id === 'tournois') renderTournois();
+}
+
+// ── LOAD ALL ──
+async function loadAll() {
+  if (!sb) return;
+  await loadMembres();
+  await loadDashboard();
+}
+
+async function loadMembres() {
+  const { data, error } = await sb.from('membres').select('*').order('points', { ascending: false });
+  if (error) { toast('Erreur membres : ' + error.message); return; }
+  allMembres = data || [];
+  renderMembres();
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  const am = allMembres.filter(m => m.categorie === 'Amateur').length;
+  const pr = allMembres.filter(m => m.categorie === 'Pro').length;
+  const el = allMembres.filter(m => m.categorie === 'Elite').length;
+  document.getElementById('d-membres').textContent = allMembres.length;
+  document.getElementById('d-amateur').textContent = am;
+  document.getElementById('d-pro').textContent = pr;
+  document.getElementById('d-elite').textContent = el;
+
+  const { count: ct } = await sb.from('tournois').select('*',{count:'exact',head:true});
+  const { count: cs } = await sb.from('scores').select('*',{count:'exact',head:true});
+  document.getElementById('d-tournois').textContent = ct || 0;
+  document.getElementById('d-scores').textContent = cs || 0;
+
+  const recent = allMembres.slice(0, 5);
+  const tbody = document.querySelector('#recent-membres tbody');
+  tbody.innerHTML = recent.length
+    ? recent.map(m => `<tr>
+        <td><strong>${m.prenom} ${m.nom}</strong></td>
+        <td><span class="badge badge-${m.categorie}">${m.categorie}</span></td>
+        <td style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--or2);">${m.points}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="3" style="text-align:center;color:var(--muted);">Aucun membre</td></tr>';
+}
+
+// ── MEMBRES ──
+function renderMembres() {
+  const tbody = document.getElementById('membres-tbody');
+  if (!allMembres.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--muted);">Aucun membre.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = allMembres.map(m => `
+    <tr id="row-${m.id}">
+      <td><strong>${m.prenom} ${m.nom}</strong></td>
+      <td>
+        <select class="inline-select" onchange="updateCat('${m.id}', this.value)">
+          <option ${m.categorie==='Amateur'?'selected':''}>Amateur</option>
+          <option ${m.categorie==='Pro'?'selected':''}>Pro</option>
+          <option ${m.categorie==='Elite'?'selected':''}>Elite</option>
+        </select>
+      </td>
+      <td>
+        <input class="inline-input" type="number" value="${m.points}"
+          onblur="updatePoints('${m.id}', this.value)"
+          onkeydown="if(event.key==='Enter')updatePoints('${m.id}', this.value)">
+      </td>
+      <td>
+        <button class="btn btn-red btn-sm" onclick="deleteMembre('${m.id}','${m.prenom} ${m.nom}')">Supprimer</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function addMembre() {
+  const nom    = document.getElementById('m-nom').value.trim();
+  const prenom = document.getElementById('m-prenom').value.trim();
+  const cat    = document.getElementById('m-cat').value;
+  if (!nom || !prenom) { toast('Nom et prénom requis.'); return; }
+  if (!sb) { toast('Configurez Supabase d\'abord.'); return; }
+  const { error } = await sb.from('membres').insert({ nom, prenom, categorie: cat, points: 0 });
+  if (error) { toast('Erreur : ' + error.message); return; }
+  document.getElementById('m-nom').value = '';
+  document.getElementById('m-prenom').value = '';
+  toast('Membre ajouté ✓');
+  await loadMembres();
+  loadDashboard();
+}
+
+async function updateCat(id, cat) {
+  if (!sb) return;
+  const { error } = await sb.from('membres').update({ categorie: cat }).eq('id', id);
+  if (error) { toast('Erreur cat : ' + error.message); return; }
+  toast('Catégorie mise à jour ✓');
+  await loadMembres();
+  loadDashboard();
+}
+
+async function updatePoints(id, val) {
+  const pts = parseInt(val) || 0;
+  if (!sb) return;
+  const { error } = await sb.from('membres').update({ points: pts }).eq('id', id);
+  if (error) { toast('Erreur pts : ' + error.message); return; }
+  toast('Points mis à jour ✓');
+  await loadMembres();
+}
+
+async function deleteMembre(id, name) {
+  if (!confirm(`Supprimer ${name} ? Action irréversible.`)) return;
+  if (!sb) return;
+  const { error } = await sb.from('membres').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message); return; }
+  toast(`${name} supprimé.`);
+  await loadMembres();
+  loadDashboard();
+}
+
+// ── CLASSEMENT ──
+function renderClassement() {
+  ['Elite','Pro','Amateur'].forEach(cat => {
+    const members = [...allMembres]
+      .filter(m => m.categorie === cat)
+      .sort((a,b) => b.points - a.points);
+    const tbody = document.getElementById('cl-' + cat.toLowerCase());
+    tbody.innerHTML = members.length
+      ? members.map((m,i) => `<tr>
+          <td style="color:var(--or);font-family:'Cormorant Garamond',serif;font-size:20px;">${i+1}</td>
+          <td><strong>${m.prenom} ${m.nom}</strong></td>
+          <td style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--or2);">${m.points}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:1rem;">Aucun joueur</td></tr>';
+  });
+}
+
+// ── TOURNOIS ──
+async function renderTournois() {
+  if (!sb) return;
+  const { data } = await sb.from('tournois')
+    .select('*, scores(membre_id, points)')
+    .order('date_tournoi', { ascending: false });
+
+  const list = document.getElementById('tournois-admin-list');
+  if (!data || !data.length) {
+    list.innerHTML = '<p style="text-align:center;padding:1.5rem;color:var(--muted);">Aucun tournoi.</p>';
+    return;
+  }
+
+  list.innerHTML = data.map(t => {
+    const d = new Date(t.date_tournoi);
+    const dateStr = d.toLocaleDateString('fr-FR');
+    const nbScores = t.scores?.length || 0;
+    return `
+    <div style="border:1px solid var(--border);border-radius:4px;padding:1rem 1.25rem;margin-bottom:.75rem;">
+      <div class="tournoi-row">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;">${t.nom}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">${dateStr} · ${t.lieu||'KNGC'} · ${nbScores} participant(s)</div>
+          ${t.description ? `<div style="font-size:11px;color:rgba(234,229,216,.5);margin-top:3px;">${t.description}</div>` : ''}
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="openScoreModal('${t.id}','${t.nom.replace(/'/g,"\\'")}')">+ Scores</button>
+        <button class="btn btn-red btn-sm" onclick="deleteTournoi('${t.id}','${t.nom.replace(/'/g,"\\'")}')">✕</button>
+      </div>
+      ${nbScores ? `<div class="scores-mini" style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);">
+        ${t.scores.map(s => {
+          const m = allMembres.find(x => x.id === s.membre_id);
+          return m ? `<span style="margin-right:12px;"><strong>${m.prenom} ${m.nom}</strong> : ${s.points} pts</span>` : '';
+        }).join('')}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function addTournoi() {
+  const nom  = document.getElementById('t-nom').value.trim();
+  const date = document.getElementById('t-date').value;
+  const lieu = document.getElementById('t-lieu').value.trim();
+  const desc = document.getElementById('t-desc').value.trim();
+  if (!nom || !date) { toast('Nom et date requis.'); return; }
+  if (!sb) { toast('Configurez Supabase d\'abord.'); return; }
+  const { error } = await sb.from('tournois').insert({ nom, date_tournoi: date, lieu, description: desc });
+  if (error) { toast('Erreur : ' + error.message); return; }
+  document.getElementById('t-nom').value = '';
+  document.getElementById('t-date').value = '';
+  document.getElementById('t-lieu').value = '';
+  document.getElementById('t-desc').value = '';
+  toast('Tournoi créé ✓');
+  await renderTournois();
+  loadDashboard();
+}
+
+async function deleteTournoi(id, name) {
+  if (!confirm(`Supprimer le tournoi "${name}" ? Tous les scores liés seront supprimés.`)) return;
+  const { error } = await sb.from('tournois').delete().eq('id', id);
+  if (error) { toast('Erreur : ' + error.message); return; }
+  toast('Tournoi supprimé.');
+  renderTournois();
+  loadDashboard();
+}
+
+// ── MODAL SCORES ──
+function openScoreModal(tid, tname) {
+  currentTournoiId = tid;
+  document.getElementById('modal-tournoi-name').textContent = tname;
+  const form = document.getElementById('scores-form');
+  form.innerHTML = allMembres.map(m => `
+    <div style="display:flex;align-items:center;justify-content:space-between;
+                padding:8px 0;border-bottom:1px solid rgba(201,168,76,.06);">
+      <div style="font-size:13px;">${m.prenom} ${m.nom}
+        <span class="badge badge-${m.categorie}" style="margin-left:8px;">${m.categorie}</span>
+      </div>
+      <input class="inline-input" type="number" placeholder="Pts" min="0"
+        data-id="${m.id}" data-pts="${m.points}" style="width:80px;">
+    </div>`).join('');
+  document.getElementById('modal-score').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal-score').classList.remove('show');
+  currentTournoiId = null;
+}
+
+async function saveScores() {
+  if (!currentTournoiId || !sb) return;
+  const inputs = document.querySelectorAll('#scores-form input');
+  const scoresToInsert = [];
+  const updates = [];
+
+  inputs.forEach(inp => {
+    const pts = parseInt(inp.value);
+    if (!pts || isNaN(pts)) return;
+    const memId = inp.dataset.id;
+    const currentPts = parseInt(inp.dataset.pts) || 0;
+    scoresToInsert.push({ tournoi_id: currentTournoiId, membre_id: memId, points: pts });
+    updates.push(sb.from('membres').update({ points: currentPts + pts }).eq('id', memId));
+  });
+
+  if (!scoresToInsert.length) { toast('Aucun score saisi.'); return; }
+
+  const { error } = await sb.from('scores').insert(scoresToInsert);
+  if (error) { toast('Erreur scores : ' + error.message); return; }
+  await Promise.all(updates);
+
+  toast(`${scoresToInsert.length} score(s) enregistré(s) ✓`);
+  closeModal();
+  await loadMembres();
+  renderTournois();
+  loadDashboard();
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──
+loadConfig();
+</script>
+</body>
+</html>

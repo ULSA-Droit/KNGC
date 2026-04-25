@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>King National Golf Club — Los Santos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;600;700&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root {
+  --or:       #C9A84C;
+  --or-clair: #E8C97A;
+  --or-pale:  #F5EDD0;
+  --vert:     #1B3A2D;
+  --vert2:    #132B20;
+  --vert3:    #0D1F17;
+  --blanc:    #FAF7F0;
+  --muted:    #8FA88A;
+  --texte:    #2C1F0E;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body {
+  font-family:'Raleway',sans-serif;
+  background:var(--vert3);
+  color:var(--blanc);
+  overflow-x:hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  background: radial-gradient(ellipse at 30% 50%, #1e4a35 0%, var(--vert3) 60%);
+}
+.hero-bg {
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 70% 80%, rgba(201,168,76,.07) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(27,58,45,.8) 0%, transparent 60%);
+}
+.hero-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-content {
+  position:relative;z-index:2;
+  text-align:center;
+  padding:2rem;
+  animation:fadeUp .8s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.logo-circle {
+  width:140px;height:140px;
+  border-radius:50%;
+  border:2px solid var(--or);
+  background:var(--vert2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 2rem;
+  box-shadow:0 0 40px rgba(201,168,76,.2), inset 0 0 20px rgba(0,0,0,.3);
+  animation:fadeUp .6s ease both;
+}
+.logo-k {
+  font-family:'Cinzel',serif;
+  font-size:56px;font-weight:700;
+  color:var(--or);
+  line-height:1;
+}
+
+.hero-eyebrow {
+  font-family:'Cinzel',serif;
+  font-size:10px;letter-spacing:6px;
+  color:var(--or);
+  margin-bottom:1rem;
+  animation:fadeUp .7s .1s ease both;
+}
+.hero-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(42px,6vw,80px);
+  font-weight:300;
+  line-height:1.1;
+  color:var(--blanc);
+  animation:fadeUp .7s .15s ease both;
+}
+.hero-title em {
+  font-style:italic;
+  color:var(--or-clair);
+}
+.hero-sub {
+  font-size:12px;letter-spacing:4px;
+  color:var(--muted);
+  margin-top:1rem;
+  animation:fadeUp .7s .2s ease both;
+}
+.hero-line {
+  width:60px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--or),transparent);
+  margin:1.5rem auto;
+  animation:fadeUp .7s .25s ease both;
+}
+.hero-tagline {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-style:italic;
+  color:rgba(250,247,240,.6);
+  animation:fadeUp .7s .3s ease both;
+}
+.hero-cta {
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:2.5rem;
+  padding:12px 32px;
+  border:1px solid var(--or);
+  color:var(--or);
+  font-family:'Cinzel',serif;
+  font-size:11px;letter-spacing:3px;
+  text-decoration:none;
+  transition:all .3s;
+  animation:fadeUp .7s .4s ease both;
+}
+.hero-cta:hover{background:var(--or);color:var(--vert3);}
+
+.scroll-hint {
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  animation:fadeUp .7s .6s ease both;
+}
+.scroll-hint span{font-size:9px;letter-spacing:3px;color:var(--muted);}
+.scroll-dot {
+  width:1px;height:40px;
+  background:linear-gradient(var(--or),transparent);
+  animation:scrollPulse 2s infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── SECTIONS ── */
+.section {
+  padding:6rem 2rem;
+  max-width:1100px;
+  margin:0 auto;
+}
+.section-eyebrow {
+  font-family:'Cinzel',serif;
+  font-size:9px;letter-spacing:5px;
+  color:var(--or);
+  margin-bottom:1rem;
+}
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,4vw,52px);
+  font-weight:300;
+  color:var(--blanc);
+  line-height:1.2;
+}
+.section-title em{color:var(--or-clair);font-style:italic;}
+.divider {
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);
+  margin:1.5rem 0;
+}
+
+/* ── ABOUT ── */
+.about-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  margin-top:3rem;
+  align-items:center;
+}
+@media(max-width:700px){.about-grid{grid-template-columns:1fr;}}
+.about-text p {
+  font-size:15px;line-height:1.9;
+  color:rgba(250,247,240,.7);
+  margin-bottom:1rem;
+  font-weight:300;
+}
+.about-stats {
+  display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;
+}
+.stat-box {
+  background:rgba(27,58,45,.4);
+  border:1px solid rgba(201,168,76,.15);
+  padding:1.5rem;
+  text-align:center;
+}
+.stat-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:300;
+  color:var(--or-clair);
+  display:block;
+}
+.stat-lbl {
+  font-size:9px;letter-spacing:3px;
+  color:var(--muted);margin-top:4px;
+}
+
+/* ── MEMBERSHIP ── */
+.membership-section {
+  background:linear-gradient(135deg, var(--vert2) 0%, var(--vert3) 100%);
+  padding:6rem 2rem;
+}
+.membership-grid {
+  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+  max-width:1100px;margin:3rem auto 0;
+}
+@media(max-width:700px){.membership-grid{grid-template-columns:1fr;}}
+.mem-card {
+  border:1px solid rgba(201,168,76,.2);
+  padding:2.5rem;
+  position:relative;
+  transition:all .3s;
+}
+.mem-card:hover{border-color:var(--or);transform:translateY(-4px);}
+.mem-card.featured {
+  border-color:var(--or);
+  background:linear-gradient(135deg,rgba(201,168,76,.05),transparent);
+}
+.mem-card.featured::before {
+  content:'PRESTIGE';
+  position:absolute;top:-1px;right:2rem;
+  background:var(--or);
+  color:var(--vert3);
+  font-family:'Cinzel',serif;
+  font-size:8px;letter-spacing:3px;
+  padding:4px 12px;
+}
+.mem-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:300;
+  color:var(--blanc);margin-bottom:.5rem;
+}
+.mem-price {
+  font-family:'Cormorant Garamond',serif;
+  font-size:42px;
+  color:var(--or-clair);
+  line-height:1;margin-bottom:1.5rem;
+}
+.mem-price sup{font-size:20px;vertical-align:super;}
+.mem-features {
+  list-style:none;margin-bottom:2rem;
+}
+.mem-features li {
+  font-size:13px;color:rgba(250,247,240,.65);
+  padding:6px 0;border-bottom:1px solid rgba(201,168,76,.08);
+  display:flex;align-items:center;gap:8px;
+}
+.mem-features li::before{content:'◈';color:var(--or);font-size:8px;}
+
+/* ── CLASSEMENT ── */
+.classement-section {
+  padding:6rem 2rem;
+  background: radial-gradient(ellipse at 50% 0%, rgba(27,58,45,.5) 0%, transparent 70%);
+}
+.classement-tabs {
+  display:flex;gap:0;
+  max-width:1100px;margin:3rem auto 0;
+  border-bottom:1px solid rgba(201,168,76,.2);
+}
+.tab-btn {
+  padding:12px 32px;
+  background:none;border:none;
+  font-family:'Cinzel',serif;
+  font-size:10px;letter-spacing:3px;
+  color:var(--muted);cursor:pointer;
+  transition:all .2s;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+}
+.tab-btn.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-btn:hover{color:var(--or-clair);}
+
+.classement-tables {
+  max-width:1100px;margin:0 auto;
+}
+.cat-table {display:none;}
+.cat-table.active{display:block;}
+
+.ranking-table {
+  width:100%;border-collapse:collapse;
+  margin-top:1rem;
+}
+.ranking-table thead tr {
+  background:rgba(201,168,76,.1);
+}
+.ranking-table thead th {
+  padding:12px 16px;
+  font-family:'Cinzel',serif;
+  font-size:9px;letter-spacing:3px;
+  color:var(--or);
+  text-align:left;font-weight:400;
+}
+.ranking-table tbody tr {
+  border-bottom:1px solid rgba(201,168,76,.06);
+  transition:background .2s;
+}
+.ranking-table tbody tr:hover{background:rgba(201,168,76,.05);}
+.ranking-table td {
+  padding:14px 16px;
+  font-size:14px;color:rgba(250,247,240,.8);
+}
+.rank-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:rgba(201,168,76,.4);
+  font-weight:300;
+}
+.rank-1 .rank-num{color:var(--or-clair);}
+.rank-2 .rank-num{color:rgba(201,168,76,.7);}
+.rank-3 .rank-num{color:rgba(201,168,76,.5);}
+.pts-cell {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;color:var(--or-clair);font-weight:300;
+}
+.badge {
+  display:inline-block;
+  padding:2px 10px;
+  font-family:'Cinzel',serif;
+  font-size:8px;letter-spacing:2px;
+  border:1px solid;
+}
+.badge-amateur{color:#8FA88A;border-color:rgba(143,168,138,.4);}
+.badge-pro    {color:#C9A84C;border-color:rgba(201,168,76,.4);}
+.badge-elite  {color:#E8C97A;border-color:rgba(232,201,122,.6);background:rgba(201,168,76,.08);}
+
+.empty-msg {
+  text-align:center;padding:3rem;
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-style:italic;
+  color:rgba(250,247,240,.3);
+}
+
+/* ── TOURNOIS ── */
+.tournois-section{
+  padding:6rem 2rem;
+  background:var(--vert2);
+}
+.tournois-list {
+  max-width:1100px;margin:3rem auto 0;
+  display:grid;gap:1rem;
+}
+.tournoi-card {
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:1.5rem;align-items:center;
+  border:1px solid rgba(201,168,76,.12);
+  padding:1.5rem 2rem;
+  transition:all .2s;
+}
+.tournoi-card:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.03);}
+.tournoi-date {
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px;color:var(--or);
+  text-align:center;
+}
+.tournoi-date .day{font-size:36px;font-weight:300;line-height:1;}
+.tournoi-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;
+  color:var(--blanc);
+}
+.tournoi-lieu {
+  font-size:12px;color:var(--muted);margin-top:4px;
+  letter-spacing:1px;
+}
+.tournoi-participants {
+  font-family:'Cinzel',serif;
+  font-size:10px;letter-spacing:2px;
+  color:var(--or);text-align:right;
+}
+
+/* ── FOOTER ── */
+footer {
+  background:var(--vert3);
+  border-top:1px solid rgba(201,168,76,.12);
+  padding:3rem 2rem;
+  text-align:center;
+}
+.footer-logo {
+  font-family:'Cinzel',serif;
+  font-size:14px;letter-spacing:4px;
+  color:var(--or);margin-bottom:.5rem;
+}
+.footer-sub {
+  font-size:11px;color:var(--muted);
+  letter-spacing:2px;
+}
+
+/* ── LOADING ── */
+.loading-row td {
+  text-align:center;padding:3rem;
+  color:var(--muted);font-style:italic;
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="logo-circle"><span class="logo-k">K</span></div>
+    <div class="hero-eyebrow">Est. 2026 · Los Santos · San Andreas</div>
+    <h1 class="hero-title">King <em>National</em><br>Golf Club</h1>
+    <p class="hero-sub">Excellence · Tradition · Compétition</p>
+    <div class="hero-line"></div>
+    <p class="hero-tagline">"Le golf, discipline du caractère."</p>
+    <a href="#classement" class="hero-cta">Voir le Classement</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Découvrir</span>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="section">
+    <div class="section-eyebrow">Le Club</div>
+    <h2 class="section-title">Un club d'<em>excellence</em><br>au cœur de Los Santos</h2>
+    <div class="divider"></div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Niché au cœur de San Andreas, le King National Golf Club incarne une vision du golf où la rigueur sportive rencontre l'élégance sociale. Fondé par Maître Henry King, avocat et ancien athlète olympique, le KNGC est plus qu'un club — c'est une communauté d'excellence.</p>
+        <p>Le parcours 9 trous, entretenu avec soin, offre une expérience technique irréprochable. Fairways parfaits, greens rapides, obstacles naturellement intégrés — chaque partie est un défi renouvelé.</p>
+        <p>Tournois exclusifs, ligues saisonnières, galas et événements mondains rythment le calendrier. Le KNGC, c'est la rencontre du sport et du prestige.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-box">
+          <span class="stat-num" id="stat-membres">—</span>
+          <span class="stat-lbl">Membres</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-tournois">—</span>
+          <span class="stat-lbl">Tournois</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">9</span>
+          <span class="stat-lbl">Trous</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">2026</span>
+          <span class="stat-lbl">Fondation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MEMBERSHIP ── -->
+<section class="membership-section" id="membership">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Adhésion</div>
+    <h2 class="section-title">Rejoindre le <em>KNGC</em></h2>
+    <div class="divider"></div>
+    <div class="membership-grid">
+      <div class="mem-card">
+        <div class="mem-name">Classique</div>
+        <div class="mem-price"><sup>$</sup>100,000</div>
+        <ul class="mem-features">
+          <li>Accès parcours 9 trous illimité</li>
+          <li>Inscription aux tournois ouverts</li>
+          <li>Classement officiel KNGC</li>
+          <li>Accès au clubhouse</li>
+          <li>Catégorie Amateur ou Pro</li>
+        </ul>
+      </div>
+      <div class="mem-card featured">
+        <div class="mem-name">Élite</div>
+        <div class="mem-price"><sup>$</sup>500,000</div>
+        <ul class="mem-features">
+          <li>Tous les avantages Classique</li>
+          <li>Accès événements privés prioritaire</li>
+          <li>Coaching personnalisé inclus</li>
+          <li>Invitation aux galas annuels</li>
+          <li>Loge VIP clubhouse</li>
+          <li>Tableau d'honneur gravé</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CLASSEMENT ── -->
+<section class="classement-section" id="classement">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Standings</div>
+    <h2 class="section-title"><em>Classement</em> officiel</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="classement-tabs">
+    <button class="tab-btn active" onclick="showTab('amateur')">🏌️ Amateur</button>
+    <button class="tab-btn" onclick="showTab('pro')">⛳ Pro</button>
+    <button class="tab-btn" onclick="showTab('elite')">👑 Elite</button>
+  </div>
+
+  <div class="classement-tables">
+    <div class="cat-table active" id="tab-amateur">
+      <table class="ranking-table">
+        <thead><tr><th>#</th><th>Joueur</th><th>Catégorie</th><th>Points</th></tr></thead>
+        <tbody id="tbody-amateur"><tr class="loading-row"><td colspan="4">Chargement...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="cat-table" id="tab-pro">
+      <table class="ranking-table">
+        <thead><tr><th>#</th><th>Joueur</th><th>Catégorie</th><th>Points</th></tr></thead>
+        <tbody id="tbody-pro"><tr class="loading-row"><td colspan="4">Chargement...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="cat-table" id="tab-elite">
+      <table class="ranking-table">
+        <thead><tr><th>#</th><th>Joueur</th><th>Catégorie</th><th>Points</th></tr></thead>
+        <tbody id="tbody-elite"><tr class="loading-row"><td colspan="4">Chargement...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── TOURNOIS ── -->
+<section class="tournois-section" id="tournois">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Calendrier</div>
+    <h2 class="section-title">Derniers <em>tournois</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="tournois-list" id="tournois-list">
+    <p class="empty-msg">Chargement des tournois...</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">KING NATIONAL GOLF CLUB</div>
+  <div class="footer-sub" style="margin-top:6px;">Los Santos · San Andreas · Est. 2026</div>
+  <div class="divider" style="max-width:200px;margin:1.5rem auto;"></div>
+  <div class="footer-sub">Fondé par Maître Henry King · Avocat au Barreau de San Andreas</div>
+</footer>
+
+<script>
+// ── CONFIG ──
+const SB_URL = localStorage.getItem('kngc_sb_url') || '';
+const SB_KEY = localStorage.getItem('kngc_sb_key') || '';
+let sb = null;
+
+if (SB_URL && SB_KEY) {
+  sb = supabase.createClient(SB_URL, SB_KEY);
+  loadAll();
+}
+
+async function loadAll() {
+  if (!sb) return;
+  await Promise.all([loadClassement(), loadTournois(), loadStats()]);
+}
+
+async function loadStats() {
+  const [{ count: cm }, { count: ct }] = await Promise.all([
+    sb.from('membres').select('*', { count: 'exact', head: true }),
+    sb.from('tournois').select('*', { count: 'exact', head: true }),
+  ]);
+  document.getElementById('stat-membres').textContent = cm || 0;
+  document.getElementById('stat-tournois').textContent = ct || 0;
+}
+
+async function loadClassement() {
+  const { data } = await sb.from('membres')
+    .select('*').order('points', { ascending: false });
+  if (!data) return;
+
+  ['amateur','pro','elite'].forEach(cat => {
+    const tbody = document.getElementById('tbody-' + cat);
+    const members = data.filter(m => m.categorie.toLowerCase() === cat);
+    if (!members.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-msg" style="padding:2rem;text-align:center;font-style:italic;color:rgba(250,247,240,.3);">Aucun joueur dans cette catégorie</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = members.map((m, i) => `
+      <tr class="rank-${i+1}">
+        <td class="rank-num">${i+1}</td>
+        <td><strong style="font-family:'Cormorant Garamond',serif;font-size:18px;">${m.prenom} ${m.nom}</strong></td>
+        <td><span class="badge badge-${cat}">${m.categorie}</span></td>
+        <td class="pts-cell">${m.points} <span style="font-size:12px;color:var(--muted);">pts</span></td>
+      </tr>`).join('');
+  });
+}
+
+async function loadTournois() {
+  const { data } = await sb.from('tournois')
+    .select('*, scores(count)')
+    .order('date_tournoi', { ascending: false })
+    .limit(10);
+
+  const list = document.getElementById('tournois-list');
+  if (!data || !data.length) {
+    list.innerHTML = `<p class="empty-msg">Aucun tournoi enregistré pour le moment.</p>`;
+    return;
+  }
+
+  list.innerHTML = data.map(t => {
+    const d = new Date(t.date_tournoi);
+    const day = d.getDate().toString().padStart(2,'0');
+    const month = d.toLocaleString('fr-FR',{month:'short'}).toUpperCase();
+    const year = d.getFullYear();
+    const nb = t.scores?.[0]?.count || 0;
+    return `
+    <div class="tournoi-card">
+      <div class="tournoi-date">
+        <div class="day">${day}</div>
+        <div>${month} ${year}</div>
+      </div>
+      <div>
+        <div class="tournoi-name">${t.nom}</div>
+        <div class="tournoi-lieu">${t.lieu || 'King\'s Golf Club & Resort'}</div>
+        ${t.description ? `<div style="font-size:12px;color:rgba(250,247,240,.5);margin-top:6px;">${t.description}</div>` : ''}
+      </div>
+      <div class="tournoi-participants">${nb} participants</div>
+    </div>`;
+  }).join('');
+}
+
+function showTab(cat) {
+  document.querySelectorAll('.cat-table').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + cat).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
